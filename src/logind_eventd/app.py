@@ -15,6 +15,7 @@ class Application:
 
     def __init__(self) -> None:
         self._log = get_logger(__name__)
+        self._shutdown = asyncio.Event()
 
     async def run(self) -> None:
         """Run the application."""
@@ -22,5 +23,12 @@ class Application:
         self._log.info("Application initialized.")
         self._log.info("Waiting for events...")
 
-        while True:
-            await asyncio.sleep(3600)
+        try:
+            await self._shutdown.wait()
+        finally:
+            self._log.info("Application stopped.")
+
+    def shutdown(self) -> None:
+        """Request application shutdown."""
+        self._log.info("Shutdown requested.")
+        self._shutdown.set()
