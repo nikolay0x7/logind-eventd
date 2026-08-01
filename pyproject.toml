@@ -1,10 +1,13 @@
 [build-system]
-requires=["setuptools>=69","wheel"]
-build-backend="setuptools.build_meta"
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name="sessiond"
-version="0.1.0"
-description="Event driven systemd-logind daemon"
-requires-python=">=3.13"
-dependencies=["dbus-next"]
+name = "logind-eventd"
+version = "0.1.0"
+description = "Event-driven daemon for systemd-logind"
+requires-python = ">=3.13"
+
+dependencies = [
+    "dbus-next",
+]
