@@ -13,3 +13,7 @@ A lightweight, event-driven daemon for monitoring systemd-logind over D-Bus.
 ## Status
 
 Early development (v0.1.0)
+
+## License
+
+MIT
