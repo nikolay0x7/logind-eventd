@@ -23,3 +23,4 @@ class Session:
     active: bool = False
 
     class_name: str = "user"
+    session_type: str | None = None

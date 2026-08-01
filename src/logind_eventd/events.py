@@ -1,9 +1,5 @@
 """
-Core event definitions.
-
-All events emitted inside logind-eventd inherit from Event.
-
-Events are immutable and transport only data.
+Domain events.
 """
 
 from __future__ import annotations
@@ -20,6 +16,23 @@ class Event:
 
 @dataclass(frozen=True, slots=True)
 class SessionEvent(Event):
-    """Base class for events related to a logind session."""
+    """Base class for session events."""
 
     session: Session
+
+
+@dataclass(frozen=True, slots=True)
+class SessionCreatedEvent(SessionEvent):
+    """A new session appeared."""
+
+
+@dataclass(frozen=True, slots=True)
+class SessionRemovedEvent(SessionEvent):
+    """A session disappeared."""
+
+
+@dataclass(frozen=True, slots=True)
+class PrepareForSleepEvent(Event):
+    """PrepareForSleep signal."""
+
+    sleeping: bool
