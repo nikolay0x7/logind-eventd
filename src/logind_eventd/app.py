@@ -38,6 +38,7 @@ class Application:
 
         await provider.connect()
 
+
         self._log.info("Connected to systemd-logind.")
 
         sessions = await provider.list_sessions()

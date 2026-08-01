@@ -1,22 +1,16 @@
 """
-Helpers for converting systemd-logind data into domain models.
+Mapping helpers for Session objects.
 """
 
 from __future__ import annotations
 
-from typing import TypeAlias
-
 from logind_eventd.models.session import Session
 
-SessionEntry: TypeAlias = tuple[str, int, str, str, str]
 
+def map_session(entry: tuple) -> Session:
+    """Convert ListSessions() entry into a Session."""
 
-def map_session(entry: SessionEntry) -> Session:
-    """Convert a ListSessions() entry into a Session model."""
-
-    session_id, uid, user, seat, object_path = entry
-
-    del object_path
+    session_id, uid, user, seat, _object_path = entry
 
     return Session(
         id=session_id,

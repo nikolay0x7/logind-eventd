@@ -46,7 +46,9 @@ class LogindProvider:
             introspection,
         )
 
-        self._manager = proxy.get_interface(MANAGER_INTERFACE)
+        self._manager = proxy.get_interface(
+            MANAGER_INTERFACE,
+        )
 
         self.manager.on_prepare_for_sleep(
             self._prepare_for_sleep,
@@ -57,7 +59,10 @@ class LogindProvider:
 
         sessions = await self.manager.call_list_sessions()
 
-        return [map_session(entry) for entry in sessions]
+        return [
+            map_session(entry)
+            for entry in sessions
+        ]
 
     def _prepare_for_sleep(
         self,
@@ -65,23 +70,19 @@ class LogindProvider:
     ) -> None:
         """Forward PrepareForSleep signal."""
 
-        def _prepare_for_sleep(
-            self,
-            sleeping: bool,
-        ) -> None:
-            """Forward PrepareForSleep signal."""
-
-            self._dispatcher.emit(
-                PrepareForSleepEvent(
-                    sleeping=sleeping,
-                )
+        self._dispatcher.emit(
+            PrepareForSleepEvent(
+                sleeping=sleeping,
             )
+        )
 
     @property
     def manager(self) -> ProxyInterface:
         """Return the logind manager interface."""
 
         if self._manager is None:
-            raise RuntimeError("LogindProvider is not connected.")
+            raise RuntimeError(
+                "LogindProvider is not connected."
+            )
 
         return self._manager
