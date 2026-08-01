@@ -1,3 +1,8 @@
+[project.urls]
+Homepage = "https://github.com/nikolay0x7/logind-eventd"
+Repository = "https://github.com/nikolay0x7/logind-eventd"
+Issues = "https://github.com/nikolay0x7/logind-eventd/issues"
+
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
