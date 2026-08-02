@@ -4,6 +4,8 @@ systemd-logind provider.
 
 from __future__ import annotations
 
+import asyncio
+
 from dbus_next.aio import ProxyInterface
 
 from logind_eventd.bus.constants import (
@@ -13,7 +15,11 @@ from logind_eventd.bus.constants import (
 )
 from logind_eventd.bus.system import SystemBus
 from logind_eventd.event_dispatcher import EventDispatcher
-from logind_eventd.events import PrepareForSleepEvent
+from logind_eventd.events import (
+    PrepareForSleepEvent,
+    SessionCreatedEvent,
+)
+from logind_eventd.logind.loader import SessionLoader
 from logind_eventd.logind.mapper import map_session
 from logind_eventd.models.session import Session
 
@@ -28,6 +34,11 @@ class LogindProvider:
     ) -> None:
         self._system_bus = system_bus
         self._dispatcher = dispatcher
+
+        self._loader = SessionLoader(
+            system_bus,
+        )
+
         self._manager: ProxyInterface | None = None
 
     async def connect(self) -> None:
@@ -85,10 +96,30 @@ class LogindProvider:
         session_id: str,
         object_path: str,
     ) -> None:
-        """Temporary SessionNew callback."""
+        """Handle SessionNew signal."""
 
-        print(
-            f"SessionNew: {session_id} -> {object_path}"
+        asyncio.create_task(
+            self._handle_session_new(
+                session_id,
+                object_path,
+            )
+        )
+
+    async def _handle_session_new(
+        self,
+        session_id: str,
+        object_path: str,
+    ) -> None:
+        """Process a newly created session."""
+
+        session = await self._loader.load(
+            object_path,
+        )
+
+        self._dispatcher.emit(
+            SessionCreatedEvent(
+                session=session,
+            )
         )
 
     @property

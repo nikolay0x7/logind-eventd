@@ -11,6 +11,8 @@ from logind_eventd.event_dispatcher import EventDispatcher
 from logind_eventd.events import PrepareForSleepEvent
 from logind_eventd.log import get_logger
 from logind_eventd.logind.provider import LogindProvider
+from logind_eventd.plugins.logger import LoggerPlugin
+from logind_eventd.plugins.manager import PluginManager
 from logind_eventd.version import __version__
 
 
@@ -22,6 +24,14 @@ class Application:
         self._shutdown = asyncio.Event()
 
         self._dispatcher = EventDispatcher()
+
+        self._plugins = PluginManager(
+            self._dispatcher,
+        )
+
+        self._plugins.register(
+            LoggerPlugin(),
+        )
 
     async def run(self) -> None:
         """Run the application."""
@@ -37,7 +47,6 @@ class Application:
         )
 
         await provider.connect()
-
 
         self._log.info("Connected to systemd-logind.")
 
