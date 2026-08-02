@@ -18,6 +18,7 @@ from logind_eventd.event_dispatcher import EventDispatcher
 from logind_eventd.events import (
     PrepareForSleepEvent,
     SessionCreatedEvent,
+    SessionRemovedEvent,
 )
 from logind_eventd.logind.loader import SessionLoader
 from logind_eventd.logind.mapper import map_session
@@ -67,6 +68,10 @@ class LogindProvider:
 
         self.manager.on_session_new(
             self._session_new,
+        )
+
+        self.manager.on_session_removed(
+            self._session_removed,
         )
 
     async def list_sessions(self) -> list[Session]:
@@ -119,6 +124,19 @@ class LogindProvider:
         self._dispatcher.emit(
             SessionCreatedEvent(
                 session=session,
+            )
+        )
+
+    def _session_removed(
+        self,
+        session_id: str,
+        object_path: str,
+    ) -> None:
+        """Handle SessionRemoved signal."""
+
+        self._dispatcher.emit(
+            SessionRemovedEvent(
+                session_id=session_id,
             )
         )
 

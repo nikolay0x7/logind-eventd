@@ -5,13 +5,56 @@ Session registry.
 from __future__ import annotations
 
 from logind_eventd.models.session import Session
+from logind_eventd.event_dispatcher import EventDispatcher
+from logind_eventd.events import (
+    SessionCreatedEvent,
+    SessionRemovedEvent,
+)
+from logind_eventd.plugins.base import Plugin
 
-
-class SessionRegistry:
+class SessionRegistry(Plugin):
     """Keep track of known sessions."""
+    name = "session_registry"
 
     def __init__(self) -> None:
         self._sessions: dict[str, Session] = {}
+
+    def register(
+        self,
+        dispatcher: EventDispatcher,
+    ) -> None:
+        """Register event handlers."""
+
+        dispatcher.subscribe(
+            SessionCreatedEvent,
+            self._on_session_created,
+        )
+
+        dispatcher.subscribe(
+            SessionRemovedEvent,
+            self._on_session_removed,
+        )
+
+    def _on_session_created(
+        self,
+        event: SessionCreatedEvent,
+    ) -> None:
+        """Handle SessionCreatedEvent."""
+
+        self.add(
+            event.session,
+        )
+
+
+    def _on_session_removed(
+        self,
+        event: SessionRemovedEvent,
+    ) -> None:
+        """Handle SessionRemovedEvent."""
+
+        self.remove(
+            event.session_id,
+        )
 
     def add(self, session: Session) -> None:
         """Add or replace a session."""

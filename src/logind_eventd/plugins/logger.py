@@ -6,6 +6,7 @@ from logind_eventd.event_dispatcher import EventDispatcher
 from logind_eventd.events import (
     PrepareForSleepEvent,
     SessionCreatedEvent,
+    SessionRemovedEvent,
 )
 from logind_eventd.plugins.base import Plugin
 
@@ -25,6 +26,11 @@ class LoggerPlugin(Plugin):
         dispatcher.subscribe(
             PrepareForSleepEvent,
             self._on_prepare_for_sleep,
+        )
+
+        dispatcher.subscribe(
+            SessionRemovedEvent,
+            self._on_session_removed,
         )
 
         dispatcher.subscribe(
@@ -50,4 +56,15 @@ class LoggerPlugin(Plugin):
         self._log.info(
             "SessionCreated: %s",
             event.session,
+        )
+
+    def _on_session_removed(
+        self,
+        event: SessionRemovedEvent,
+    ) -> None:
+        """Log SessionRemoved events."""
+
+        self._log.info(
+            "SessionRemoved: %s",
+            event.session_id,
         )

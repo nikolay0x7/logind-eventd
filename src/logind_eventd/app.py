@@ -13,6 +13,7 @@ from logind_eventd.log import get_logger
 from logind_eventd.logind.provider import LogindProvider
 from logind_eventd.plugins.logger import LoggerPlugin
 from logind_eventd.plugins.manager import PluginManager
+from logind_eventd.registry import SessionRegistry
 from logind_eventd.version import __version__
 
 
@@ -27,6 +28,12 @@ class Application:
 
         self._plugins = PluginManager(
             self._dispatcher,
+        )
+
+        self._registry = SessionRegistry()
+
+        self._plugins.register(
+            self._registry,
         )
 
         self._plugins.register(
@@ -58,12 +65,23 @@ class Application:
         )
 
         for session in sessions:
-            self._log.info("%s", session)
+            self._registry.add(session)
+
+            self._log.info(
+                "%s",
+                session,
+            )
+
+        self._log.info(
+            "Session registry initialized with %d session(s).",
+            len(self._registry),
+        )
 
         self._log.info("Waiting for events...")
 
         try:
             await self._shutdown.wait()
+
         finally:
             self._log.info("Application stopped.")
 

@@ -27,8 +27,10 @@ class SessionCreatedEvent(SessionEvent):
 
 
 @dataclass(frozen=True, slots=True)
-class SessionRemovedEvent(SessionEvent):
+class SessionRemovedEvent(Event):
     """A session disappeared."""
+
+    session_id: str
 
 
 @dataclass(frozen=True, slots=True)
