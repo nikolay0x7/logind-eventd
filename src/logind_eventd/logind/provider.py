@@ -54,6 +54,10 @@ class LogindProvider:
             self._prepare_for_sleep,
         )
 
+        self.manager.on_session_new(
+            self._session_new,
+        )
+
     async def list_sessions(self) -> list[Session]:
         """Return all active logind sessions."""
 
@@ -74,6 +78,17 @@ class LogindProvider:
             PrepareForSleepEvent(
                 sleeping=sleeping,
             )
+        )
+
+    def _session_new(
+        self,
+        session_id: str,
+        object_path: str,
+    ) -> None:
+        """Temporary SessionNew callback."""
+
+        print(
+            f"SessionNew: {session_id} -> {object_path}"
         )
 
     @property
